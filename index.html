@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Quiz Game – Food & Drink</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .quiz-box {
+      background: #ffffff;
+      width: 90%;
+      max-width: 600px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    .question {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .options button {
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #eaeaea;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .options button:hover {
+      background: #d0e6ff;
+    }
+    .score {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <h1>English Quiz: Food & Drink</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="score" id="score"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====== SOUND EFFECTS ======
+    const correctSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+    const wrongSound = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+
+    // ====== TIMER ======
+    let timeLeft = 15;
+    let timerInterval;
+    const questions = [
+      { q: "How does lemon taste?", o: ["Sweet", "Salty", "Sour", "Bitter"], a: 2 },
+      { q: "Chocolate cake usually tastes…", o: ["Spicy", "Sweet", "Sour", "Salty"], a: 1 },
+      { q: "Chili sauce has a … taste.", o: ["Sweet", "Spicy", "Bland", "Soft"], a: 1 },
+      { q: "Milk has a … texture.", o: ["Crunchy", "Hard", "Liquid", "Dry"], a: 2 },
+      { q: "Chips are …", o: ["Soft", "Crunchy", "Liquid", "Chewy"], a: 1 },
+      { q: "Bread is usually …", o: ["Soft", "Spicy", "Bitter", "Liquid"], a: 0 },
+      { q: "Ice cream feels …", o: ["Hot", "Cold", "Hard", "Dry"], a: 1 },
+      { q: "Honey tastes …", o: ["Salty", "Bitter", "Sweet", "Sour"], a: 2 },
+      { q: "Coffee can taste …", o: ["Sweet", "Bitter", "Salty", "Sour"], a: 1 },
+      { q: "Water has a … taste.", o: ["Sweet", "No taste", "Sour", "Bitter"], a: 1 },
+      { q: "Apple juice is a … drink.", o: ["Solid", "Liquid", "Hard", "Crunchy"], a: 1 },
+      { q: "Crackers are …", o: ["Soft", "Crunchy", "Liquid", "Creamy"], a: 1 },
+      { q: "Soup is usually …", o: ["Dry", "Liquid", "Hard", "Crunchy"], a: 1 },
+      { q: "Cheese can taste …", o: ["Salty", "Sweet", "Sour", "Bitter"], a: 0 },
+      { q: "Cake has a … texture.", o: ["Hard", "Soft", "Liquid", "Crunchy"], a: 1 },
+      { q: "Fried chicken skin is …", o: ["Soft", "Crunchy", "Liquid", "Wet"], a: 1 },
+      { q: "Yogurt tastes …", o: ["Sweet", "Sour", "Salty", "Bitter"], a: 1 },
+      { q: "Rice is … food.", o: ["Liquid", "Solid", "Soft drink", "Juice"], a: 1 },
+      { q: "Tea is a …", o: ["Food", "Snack", "Drink", "Fruit"], a: 2 },
+      { q: "Candy usually tastes …", o: ["Spicy", "Sweet", "Salty", "Bitter"], a: 1 }
+    ];
+
+    let index = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const scoreEl = document.getElementById("score");
+    const timerEl = document.createElement("div");
+    timerEl.style.textAlign = "center";
+    timerEl.style.fontWeight = "bold";
+    document.getElementById("quiz").insertBefore(timerEl, scoreEl);
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 15;
+      timerEl.innerHTML = `Time left: ${timeLeft}s`;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.innerHTML = `Time left: ${timeLeft}s`;
+        if (timeLeft === 0) {
+          clearInterval(timerInterval);
+          index++;
+          loadQuestion();
+        }
+      }, 1000);
+    }
+
+    function loadQuestion() {
+      if (index >= questions.length) {
+        questionEl.innerHTML = "Quiz Finished!";
+        optionsEl.innerHTML = "";
+        scoreEl.innerHTML = `Your final score: ${score} / 100`;
+        return;
+      }
+
+      questionEl.innerHTML = `${index + 1}. ${questions[index].q}`;
+      optionsEl.innerHTML = "";
+      questions[index].o.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsEl.appendChild(btn);
+      });
+      scoreEl.innerHTML = `Score: ${score}`;
+      startTimer();
+    }
+
+    function checkAnswer(choice) {
+      clearInterval(timerInterval);
+      if (choice === questions[index].a) {
+        score += 5;
+        correctSound.play();
+      } else {
+        wrongSound.play();
+      }
+      index++;
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
